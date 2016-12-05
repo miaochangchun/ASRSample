@@ -22,6 +22,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView tvResult;
     private HciCloudSysHelper mHciCloudSysHelper;
     private HciCloudAsrHelper mHciCloudAsrHelper;
+    private Button btnContinue;
+    private Button btnDialog;
+    private Button btnCancel;
 
     private class MyHandler extends Handler {
 
@@ -87,20 +90,38 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    /**
+     * 初始化控件
+     */
     private void initView() {
         btnStart = (Button) findViewById(R.id.btn_start);
+        btnContinue = (Button) findViewById(R.id.btn_continue);
+        btnDialog = (Button) findViewById(R.id.btn_dialog);
+        btnCancel = (Button) findViewById(R.id.btn_cancel);
         tvState = (TextView) findViewById(R.id.tv_state);
         tvError = (TextView) findViewById(R.id.tv_error);
         tvResult = (TextView) findViewById(R.id.tv_result);
 
         btnStart.setOnClickListener(this);
+        btnContinue.setOnClickListener(this);
+        btnDialog.setOnClickListener(this);
+        btnCancel.setOnClickListener(this);
     }
 
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.btn_start:
-                mHciCloudAsrHelper.startAsrRecorder(ConfigUtil.CAP_KEY_ASR_CLOUD_FREETALK, "common");
+                mHciCloudAsrHelper.startAsrRecorder(ConfigUtil.CAP_KEY_ASR_CLOUD_FREETALK, "common", "no");
+                break;
+            case R.id.btn_continue:
+                mHciCloudAsrHelper.startAsrRecorder(ConfigUtil.CAP_KEY_ASR_CLOUD_FREETALK, "common", "yes");
+                break;
+            case R.id.btn_dialog:
+                mHciCloudAsrHelper.startAsrRecorder(ConfigUtil.CAP_KEY_ASR_CLOUD_DIALOG, "common", "no");
+                break;
+            case R.id.btn_cancel:
+                mHciCloudAsrHelper.CancelAsrRecorder();
                 break;
             default:
                 break;

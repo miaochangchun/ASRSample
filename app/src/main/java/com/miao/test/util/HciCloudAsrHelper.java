@@ -101,23 +101,36 @@ public class HciCloudAsrHelper {
      *
      * @param capkey 开启录音机时使用的capkey
      * @param domain 设置识别的领域,没有特殊设置，domain=common
+     * @param isContinue 设置是否为连续识别，yes为是连续识别，no是非连续识别
      */
-    public void startAsrRecorder(String capkey, String domain) {
+    public void startAsrRecorder(String capkey, String domain, String isContinue) {
+        if (mASRRecorder.getRecorderState() == mASRRecorder.RECORDER_STATE_RECOGING) {
+            mASRRecorder.cancel();
+        }
         if (mASRRecorder.getRecorderState() == ASRRecorder.RECORDER_STATE_IDLE) {
-            String strConfig = getAsrConfigParam(capkey, domain);
+            String strConfig = getAsrConfigParam(capkey, domain, isContinue);
             mASRRecorder.start(strConfig);
         }
     }
 
+    /**
+     * 取消录音识别功能
+     */
+    public void CancelAsrRecorder() {
+        if (mASRRecorder.getRecorderState() == mASRRecorder.RECORDER_STATE_RECOGING) {
+            mASRRecorder.cancel();
+        }
+    }
 
     /**
      * 获取asr识别时的配置参数
      *
      * @param capkey 录音机识别是的配置参数capkey
      * @param domain 设置的领域值
+     * @param isContinue 设置是否为连续识别
      * @return
      */
-    private String getAsrConfigParam(String capkey, String domain) {
+    private String getAsrConfigParam(String capkey, String domain, String isContinue) {
         AsrConfig asrConfig = new AsrConfig();
         asrConfig.addParam(AsrConfig.AudioConfig.PARAM_KEY_AUDIO_FORMAT, "pcm16k16bit");
         asrConfig.addParam(AsrConfig.AudioConfig.PARAM_KEY_ENCODE, "speex");
@@ -125,6 +138,11 @@ public class HciCloudAsrHelper {
         asrConfig.addParam(AsrConfig.SessionConfig.PARAM_KEY_REALTIME, "yes");
         asrConfig.addParam(AsrConfig.ResultConfig.PARAM_KEY_ADD_PUNC, "yes");
         asrConfig.addParam(AsrConfig.ResultConfig.PARAM_KEY_DOMAIN, domain);
+        asrConfig.addParam("continue", isContinue);
+        if ("asr.cloud.dialog".equals(capkey)) {
+            //intention需要在开发者社区勾选，必须要设置对应的asr.cloud.dialog才可以使用，默认使用baike的领域
+            asrConfig.addParam("intention", "baike");
+        }
         return asrConfig.getStringConfig();
     }
 
